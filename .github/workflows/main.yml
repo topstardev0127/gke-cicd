@@ -1,0 +1,40 @@
+name: gke-cicd
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GAR_LOCATION: us-central1 # TODO: update region of the Artifact Registry
+  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
+  GKE_ZONE: us-central1-c   # TODO: update to cluster zone
+  DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
+  REPOSITORY: samples # TODO: update to Artifact Registry docker repository
+  IMAGE: static-site
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # Build the Docker image
+    - name: Build
+      run: |-
+        docker build \
+          --tag "cicd-app:latest" \
+          .
+          
+    - name: Run
+      run: |-
+        docker run \
+          --rm -p 80:5001 cicd-app:latest
