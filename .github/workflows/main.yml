@@ -29,10 +29,11 @@ jobs:
       
     # Get the GKE credentials so we can deploy to the cluster
     - name: Set up GKE credentials
-      uses: google-github-actions/get-gke-credentials@v2
-      with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+      run: gcloud container clusters get-credentials ${{ env.GKE_CLUSTER }} --region ${{eng.GKE_CLUSTER}}
+      # uses: google-github-actions/get-gke-credentials@v2
+      # with:
+        # cluster_name: ${{ env.GKE_CLUSTER }}
+        # location: ${{ env.GKE_ZONE }}
 
     # Build the Docker image
     - name: Build
